@@ -1,6 +1,8 @@
 <?php
 require 'vendor/autoload.php';
-
+#ini_set("log_errors", 1);
+#ini_set("error_log", "/tmp/php-error.log");
+#error_log( "Hello, errors!" );
 if (file_exists(__DIR__ . '/config.php')) {
     $config = require __DIR__ . '/config.php';
 } else {
@@ -53,7 +55,7 @@ function formatRatio($bytesReceived, $bytesSent)
 }
 
 $dayFormatter = new IntlDateFormatter(
-    'en-GB',
+    'de-DE',
     IntlDateFormatter::FULL,
     IntlDateFormatter::NONE,
     date_default_timezone_get()
@@ -67,8 +69,8 @@ $dayFormatter = new IntlDateFormatter(
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <title>Network Traffic</title>
-        <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="bootstrap-3.2.0-dist/css/bootstrap-theme.min.css" rel="stylesheet" />
+    	<link href="https://cdn.3dns.eu/vendor/materialize/css/materialize.min.css" rel="stylesheet" type="text/css">
+    	<script src="https://cdn.3dns.eu/vendor/materialize/js/materialize.min.js"></script>
         <link href="xcharts/xcharts.min.css" rel="stylesheet" />
         <script type="text/javascript" src="xcharts/d3.min.js"></script>
         <script type="text/javascript" src="xcharts/xcharts.min.js"></script>
@@ -85,11 +87,11 @@ $dayFormatter = new IntlDateFormatter(
 
             div.ratio > div {
                 height: 10px;
-                background-color: #5cb85c;
+                background-color: #1E88E5;
             }
 
             g.received > rect {
-                fill: #5cb85c !important;
+                fill: #1E88E5!important;
             }
 
             g.sent > rect {
@@ -122,6 +124,9 @@ $dayFormatter = new IntlDateFormatter(
     <body>
         <div class="container">
             <div class="page-header">
+			<center><h5>Live</h5></center>
+<center><b><span>Upload: </span><span id="liveUL">0 Kbps</span></b>
+<center><b><span>Download: </span><span id="liveDL">0 Kbps</span></b>
                 <?php if (array_key_exists('interfaces', $config) && count($config['interfaces']) > 1): ?>
                     <div class="pull-right">
                         <div class="input-group">
@@ -137,10 +142,9 @@ $dayFormatter = new IntlDateFormatter(
                     </div>
                 <?php endif; ?>
 
-                <h1>Network Traffic</h1>
             </div>
 
-            <h2>Hourly</h2>
+            <h3>24 Stunden</h3>
             <figure style="width: 100%; height: 300px;" id="hourly-chart"></figure>
             <script type="text/javascript">
                 <?php
@@ -213,16 +217,16 @@ $dayFormatter = new IntlDateFormatter(
                 );
             </script>
 
-            <h2>Daily</h2>
-            <table class="table table-bordered">
+            <h3 class="hide">Täglich</h3>
+            <table class="hide table table-bordered responsive-table">
                 <thead>
                     <tr>
-                        <th class="day">Day</th>
-                        <th class="received">Received</th>
-                        <th class="sent">Sent</th>
-                        <th class="total">Total</th>
-                        <th class="average-rate">Average Rate</th>
-                        <th class="ratio">Ratio</th>
+                        <th class="day">Tag</th>
+                        <th class="received">Empfangen</th>
+                        <th class="sent">Gesendet</th>
+                        <th class="total">Gesamt</th>
+                        <th class="average-rate">Durchschnittlich</th>
+                        <th class="ratio">Verhältnis</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,16 +258,16 @@ $dayFormatter = new IntlDateFormatter(
                 </tbody>
             </table>
 
-            <h2>Monthly</h2>
-            <table class="table table-bordered">
+            <h3>Monatlich</h3>
+            <table class="table table-bordered responsive-table">
                 <thead>
                     <tr>
-                        <th class="month">Month</th>
-                        <th class="received">Received</th>
-                        <th class="sent">Sent</th>
-                        <th class="total">Total</th>
-                        <th class="average-rate">Average Rate</th>
-                        <th class="ratio">Ratio</th>
+                        <th class="month">Monat</th>
+                        <th class="received">Empfangen</th>
+                        <th class="sent">Gesendet</th>
+                        <th class="total">Gesamt</th>
+                        <th class="average-rate">Durchschnittlich</th>
+                        <th class="ratio">Verhältnis</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -299,17 +303,17 @@ $dayFormatter = new IntlDateFormatter(
                 </tbody>
             </table>
 
-            <h2>Top 10</h2>
-            <table class="table table-bordered">
+            <h2 class="hide" >Top 10</h2>
+            <table class="table hide table-bordered responsive-table">
                 <thead>
                     <tr>
                         <th class="position">#</th>
-                        <th class="day">Day</th>
-                        <th class="received">Received</th>
-                        <th class="sent">Sent</th>
-                        <th class="total">Total</th>
-                        <th class="average-rate">Average Rate</th>
-                        <th class="ratio">Ratio</th>
+                        <th class="day">Tag</th>
+                        <th class="received">Empfangen</th>
+                        <th class="sent">Gesendet</th>
+                        <th class="total">Gesamt</th>
+                        <th class="average-rate">Durchschnittlich</th>
+                        <th class="ratio">Verhältnis</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -344,3 +348,24 @@ $dayFormatter = new IntlDateFormatter(
         </div>
     </body>
 </html>
+<script type="text/javascript">
+$(document).ready(function() {
+ setTimeout(refreshUL, 1000);
+ setTimeout(refreshDL, 1000);
+});
+
+function refreshUL() {
+ $.ajax({ url: "liveUL.php" }).done(function (data) {
+  $("#liveUL").html(data);
+ }).always(function () {
+  setTimeout(refreshUL, 4 * 1000);
+ });
+}
+function refreshDL() {
+ $.ajax({ url: "liveDL.php" }).done(function (data) {
+  $("#liveDL").html(data);
+ }).always(function () {
+  setTimeout(refreshDL, 4 * 1000);
+ });
+}
+</script>

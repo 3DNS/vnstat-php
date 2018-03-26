@@ -1,16 +1,16 @@
 # vnStat-PHP
 
-This is a simple PHP frontend for vnStat to nicely display statistics about your
-network traffic. All you have to do is to install vnStat on your system.
-Preferably you run it as daemon, but you can theoretically also run it in user
-mode, please refer to the vnStat documentation. After that, just direct a
-virtual host to this directory and you are done.
+Dies ist ein PHP Frontend um eure Netzwerkstatistik auf einen Blick zu haben. 
+Die Angaben erfolgen in Stunden / Tage / Monate, dazu gibt es jeweils eine schöne tabellarische Übersicht & für die letzten 24 Stunden ein Diagramm.
 
-## Configuring multiple or different interfaces
+## Konfigurieren
 
-You can easily change the used interface or add more by copying the
-"config.php.dist" file to "config.php" and adjust the values in it.
+1. config.php bearbeiten mit euren Interfaces z.B. eth0
+2. apt-get install vnstat installieren
+3. vnstat -u -i INTERFACE z.B. eth0 (Datenbank anlegen für Interface) 
+4. als Conjob */1 * * * *  vnstat -u einstellen
 
-## Example output
+Getestet mit PHP7.0 und php7.0-intl benötigt als Paket.
+## Screenshot
 
-![](https://github.com/dasprid/vnstat-php/blob/master/example.png)
+![](https://github.com/3DNS/vnstat-php/blob/master/example.png)
