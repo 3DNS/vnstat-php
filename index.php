@@ -127,21 +127,22 @@ $dayFormatter = new IntlDateFormatter(
 			<center><h5>Live</h5></center>
 <center><b><span>Upload: </span><span id="liveUL">0 Kbps</span></b>
 <center><b><span>Download: </span><span id="liveDL">0 Kbps</span></b>
+<br>
                 <?php if (array_key_exists('interfaces', $config) && count($config['interfaces']) > 1): ?>
-                    <div class="pull-right">
-                        <div class="input-group">
-                            <span class="input-group-addon">Interface</span>
-                            <select class="form-control" onchange="window.location.href = '?interface=' + this.value;">
+                    <div class="row right">
+                        <div class="input-field col m10">
+                            <select onchange="window.location.href = '?interface=' + this.value;">
+      				<option value="" disabled selected>AuswÃ¤hlen</option>
                                 <?php foreach ($config['interfaces'] as $option): ?>
-                                    <option value="<?php echo htmlspecialchars($option); ?>"<?php if ($option === $interface): ?> selected="selected"<?php endif; ?>>
+                                    <option value="<?php echo htmlspecialchars($option); ?>"<?php if ($option === $interface): ?> "<?php endif; ?>>
                                         <?php echo htmlspecialchars($option); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+    <label>Schnittstelle</label>
                         </div>
                     </div>
                 <?php endif; ?>
-
             </div>
 
             <h3>24 Stunden</h3>
@@ -349,6 +350,7 @@ $dayFormatter = new IntlDateFormatter(
     </body>
 </html>
 <script type="text/javascript">
+$('select').material_select();
 $(document).ready(function() {
  setTimeout(refreshUL, 1000);
  setTimeout(refreshDL, 1000);
